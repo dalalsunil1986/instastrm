@@ -50,3 +50,4 @@
 <input type="hidden" id="tagId" value="<?php echo $tag_id; ?>" />
 <input type="hidden" id="tagName" value="<?php echo $tag; ?>" />
 <input type="hidden" id="Age" value="<?php echo $age; ?>" />
+<div class="baseUrl" style="display:none"><?php echo Yii::app()->request->baseUrl; ?></div>

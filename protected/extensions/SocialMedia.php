@@ -1,4 +1,19 @@
  <?php
+ 
+ /**
+ * Main class for calling Instagram API
+ *
+ *
+ * PHP version 5.3
+ *
+ * LICENSE: This source file is subject to version 3.01 of the PHP license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.php.net/license/3_01.txt.  If you did not receive a copy of
+ * the PHP License and are unable to obtain it through the web, please
+ * send a note to license@php.net so we can mail you a copy immediately.
+ * 
+ * @author Joel Capillo <hunyoboy@gmail.com>
+ */
 
 class SocialMedia{
    
@@ -11,7 +26,12 @@ class SocialMedia{
        $this->count = $count; 
     }  
     
-    
+    /**
+     * The CURL function being used.
+     *
+     * @param string url the url to do curl.
+     *
+     */
     private function doCurl($url){
             
             $clean_url = str_replace(" ","%20",$url);
@@ -31,7 +51,10 @@ class SocialMedia{
             return $response; 
     } 
     
-    
+    /**
+     * Set the tags into array
+     *
+     */
     private function getTags(){
         $tags = array();
         if(!is_array($this->tags)){
@@ -42,20 +65,38 @@ class SocialMedia{
         return $tags;
     }
     
-    
+    /**
+     * Form or contruct the Instagram url for querying
+     *
+     * @param string $tag the photo tag to query
+     * @return string
+     * 
+     */
     private function instagramUrl($tag){
       $tag = preg_replace('/[^a-zA-Z0-9_ %\[\]\.\(\)%&-]/s', '', $tag);//strip out special characters since instagram does not allow them
-      $url = "https://api.instagram.com/v1/tags/$tag/media/recent?access_token=175159176.f59def8.431c3ffc12e64e7bbd814cf7db8f58a6&count=".$this->count; 
+      $url = "https://api.instagram.com/v1/tags/$tag/media/recent?access_token=".Yii::app()->params['instagramToken']."&count=".$this->count; 
       return $url; 
     }
     
+    /**
+     * Form or contruct the Instagram url for querying
+     * This is not use for now.
+     *
+     * @param string $tag the photo tag to query
+     * @return string
+     *
+     */
     private function twitterUrl($tag){
         $url = "http://search.twitter.com/search.json?q=$tag&include_entities=1&count=".$this->count;
         return $url;
     }
     
     
-    
+    /**
+     * Query the Instagram API
+     *
+     * @return array $responses
+     */
     public function queryInstagram(){
         $tags = $this->getTags();
         $responses=array();//store all responses for each tag
@@ -64,10 +105,15 @@ class SocialMedia{
            if(!empty($result))
              $responses[$tag] = $result; 
         }
+        
         return $responses;
     }
     
-    
+    /**
+     * Query the Twitter API
+     *
+     * @return array $responses
+     */
     public function queryTwitter(){
         $tags = $this->getTags();
         $responses = array();
@@ -98,7 +144,11 @@ class SocialMedia{
     }
     
    
-    //combine instagram and twitter queries
+    /**
+     * Query both Instagram and Twitter API and saved the response on database
+     *
+     *@param boolean $includeTwitter determines if to query Twitter API or not
+     */
     public function queryAPI($includeTwitter=false){
         
         $return_array = array();
@@ -168,18 +218,22 @@ class SocialMedia{
             }
             
         }
-        //print_r($return_array['text']);die();
+       
         if(!empty($return_array))
            MediaDetails::model()->saveMediaDetails($return_array);//save the response
     }
     
-    
-    //@param maxAge -> unix time for the most recent feed
-    //@param tagId -> index for the tag
-    public static function getFreshInstagrams($tag_id,$maxAge){
+ 
+    /**
+     * Static function that retrieves the most recent Instagram query
+     *
+     * @param integer tagId the tag id 
+     * @param integer maxAge unix time for the most recent feed
+     *
+     */
+    public static function getFreshInstagrams($tag_id,$maxAge){        
         
-        $fresh_instagrams = MediaDetails::model()->displayByMediaId($tag_id,self::mediaId('instagram'),$maxAge);
-        
+        $fresh_instagrams = MediaDetails::model()->displayByMediaId($tag_id,self::mediaId('instagram'),$maxAge);        
         if(count($fresh_instagrams) > 0){
             return self::instagramFeed($tag_id,$fresh_instagrams);
         }
@@ -189,9 +243,13 @@ class SocialMedia{
         
     }
     
-    //@param maxAge -> unix time for the most recent feed
-    //@param tagId -> index for the tag
-    //ajax call to get the information for fullsize slide show
+   
+    /**
+     * Ajax call to get the information for fullsize slide show
+     *
+     * @param integer tagId
+     * @param integer maxAge unix time for the feed to return
+     */
     public static function getSlideShow($tag_id,$maxAge){
         
         $social_media = new self(Tags::model()->findByPk($tag_id)->name,35);//replenish the database
@@ -212,9 +270,14 @@ class SocialMedia{
         }
     }
     
-     
-     //@param minAge -> unix time for the most oldest feed
-    //@param tagId -> index for the tag
+    
+    
+    /**
+     * Returns the oldest Instagram feed
+     *
+     * @param integer $minAge unix time for the most oldest feed
+     * @param integer $$tagId the tag id
+     */
     public static function getOldInstagram($tag_id,$minAge){
         $old_instagram = MediaDetails::model()->displayByMediaIdOld($tag_id,self::mediaId('instagram'),$minAge);//returns a max of 10 slides
         if(count($old_instagram) > 0){
@@ -224,12 +287,16 @@ class SocialMedia{
             return '';
         }
     }
-    
    
-    //instagram social feed
+    /**
+     * Contruct the html for Instagram feed
+     *
+     * @param integer $tag_id the tag id to contruct the feed for
+     * @param boolean $fresh_instagrams
+     * @return string $str the html string
+     */
     public static function instagramFeed($tag_id,$fresh_instagrams = null){
-        
-      
+       
       $counter = 0;
       $models = (!isset($fresh_instagrams) ?  MediaDetails::model()->displayByMediaId($tag_id,self::mediaId('instagram')) : $fresh_instagrams );
       $str = '';
@@ -245,7 +312,6 @@ class SocialMedia{
             $time_posted = $model['date_created'];
             $time_diff = $current_time - $time_posted;
             $timeposted = self::computeDate($time_diff);
-            //$onPhotoLoad = '';
             
             $isTagOccurred=false;
             $text = '';
@@ -278,11 +344,9 @@ class SocialMedia{
                     $str .= $text.' '.'<a href="'.$model['display_url'].'" target="_blank">'.$model['display_url'].'</a><br /><br />Posted: '.$timeposted;
                   $str .= '</div>';
                   
-                $description = ''; 
-                //$tagname = '';
+                $description = '';                 
                 if(isset($model['text']) || strlen($model['text']) > 0){
-                       $description = '&description='.urlencode($model['text']);
-                       //$tagname = urlencode($model['text']);
+                       $description = '&description='.urlencode($model['text']);                      
                 }
                   
                 //start social likes buttons
@@ -304,9 +368,17 @@ class SocialMedia{
       }
       
       return $str;   
-    }
+    }  
     
-    //returns the string to create the slide show
+  
+    /**
+     * Returns the html needed to create photo slideshow
+     *
+     * @param integer $tag_id the tag id to contruct the feed for
+     * @param array $fresh_instagrams
+     * 
+     * @return string $str the html string
+     */
     public static function slideShowFeed($tag_id,$fresh_instagram){
       $str = '';
       $image_json = '';
@@ -371,9 +443,20 @@ class SocialMedia{
     }
     
     
+    /**
+     * Construct the social plugin for Facebook, Twitter, etc.
+     *
+     * @param string $url
+     * @param string $unique_identifier
+     * @param string $media_url
+     * @param string $description
+     * @param string $text
+     *
+     * @return string
+     */
     private static function socialPlugIn($url,$unique_identifier,$media_url,$description,$text){
         
-        $buttonDiv = '<div><a href="#" class="popUpBtn btn btn-primary" onclick="bindClickFunction(\''.$unique_identifier.'\',\''.$media_url.'\',\''.$url.'\');return false;">Share It</a></div>';
+        $buttonDiv = '<div><a href="#" class="popUpBtn btn btn-primary" onclick="bindClickFunction(\''.$unique_identifier.'\',\''.$media_url.'\',\''.$url.'\');return false;">Pop-out View</a></div>';
         $startDiv = '<div class="modal hide fade" id="myModal_'.$unique_identifier.'">';
         $startDiv .= '<div class="modal-header">
                         <div class="title_holder"><b>Share it</b></div><div class="curvedarrow"></div><button type="button" class="close" data-dismiss="modal">x</button>
@@ -386,12 +469,12 @@ class SocialMedia{
                     $str .= '<div class="twitter_plugin_holder" id="twitter_plugin_holder_'.$unique_identifier.'">
                              <a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$url.'" data-via="'.Yii::app()->params['viaName'].'">Tweet</a>
                              </div>';
-                    $str .=  '<div class="pinterest_plugin_holder" id="pinterest_plugin_holder_'.$unique_identifier.'">
+                    /*$str .=  '<div class="pinterest_plugin_holder" id="pinterest_plugin_holder_'.$unique_identifier.'">
                                   <iframe class="pin-it-button" scrolling="no" frameborder="0" style="border:none;width:90px;height:20px;" 
                                   src="http://pinit-cdn.pinterest.com/pinit.html?url='.urlencode($url).'&media='.urlencode($media_url).
                                   '&count-layout=horizontal'.$description.'&ref='.urlencode(self::createDocumentUri()).'" >
                                   </iframe>
-                              </div>';
+                              </div>';*/
                     $str .= '<div style="clear:both"></div></div><div class="bigImageHolder"><img id="bigImage_'.$unique_identifier.'" src=""/></div></div>';//closing div tag
           $closeStartDiv = '</div>';
       
@@ -400,12 +483,24 @@ class SocialMedia{
         
     }
     
-     //return the url
+    
+    /**
+     * Constructs the whole site url
+     *
+     */
     private static function createDocumentUri(){
       return 'http://'.Yii::app()->getRequest()->serverName.Yii::app()->createUrl("/site/index");    
-   }
+    }
+    
 
-    //highlight words that starts with @ or # or url-like
+    /**
+     * Responsible for highlighting words that starts with @ or # or url-like by adding a css class
+     *
+     * @param string $text the whole text
+     * @param string $tag the tag to find inside the text and to be highlighted
+     *
+     * @return array $return_array
+     */
     public static function specialText($text,$tag){
         
         $return_array = array();
@@ -449,12 +544,27 @@ class SocialMedia{
     }
     
    
-    
+    /**
+     * Validates the url
+     *
+     * @param string $url the url to validate
+     *
+     * @return boolean
+     */
     public static function isValidURL($url)
     {
       return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
     }
     
+    
+    /**
+     * Returns the proper url with the http/https
+     *
+     * @param string $url
+     *
+     * @return string $url the proper url
+     *
+     */
     public static function cleanUrl($url){
         if(!self::isValidURL($url))
         {
@@ -465,8 +575,11 @@ class SocialMedia{
     
    
     /**
-    *compute a date
-    *@param $arg(bigint)- date in unix format(milliseconds)
+    * Computes the unixdate to human readable format
+    *
+    * @param integer $arg date in unix format(milliseconds)
+    *
+    * @return string
     */
     private static function computeDate($arg)
     {

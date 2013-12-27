@@ -39,12 +39,14 @@
             
             // Thumbnail Tray Toggle
             $(vars.tray_button).toggle(function(){
+                var baseurl = jQuery.trim($('.baseUrl').html());
                 $(vars.thumb_tray).stop().animate({bottom : 0, avoidTransforms : true}, 300 );
-                if ($(vars.tray_arrow).attr('src')) $(vars.tray_arrow).attr("src", vars.image_path + "button-tray-down.png");
+                if ($(vars.tray_arrow).attr('src')) $(vars.tray_arrow).attr("src", baseurl + vars.image_path + "button-tray-down.png");
                 return false;
             }, function() {
+                var baseurl = jQuery.trim($('.baseUrl').html());
                 $(vars.thumb_tray).stop().animate({bottom : -$(vars.thumb_tray).height(), avoidTransforms : true}, 300 );
-                if ($(vars.tray_arrow).attr('src')) $(vars.tray_arrow).attr("src", vars.image_path + "button-tray-up.png");
+                if ($(vars.tray_arrow).attr('src')) $(vars.tray_arrow).attr("src", baseurl + vars.image_path + "button-tray-up.png");
                 return false;
             });
             
@@ -206,14 +208,14 @@
          /* Play & Pause Toggle
         ----------------------------*/
          playToggle : function(state){
-             
+             var baseurl = jQuery.trim($('.baseUrl').html());
              if (state =='play'){
                  // If image, swap to pause
-                 if ($(vars.play_button).attr('src')) $(vars.play_button).attr("src", vars.image_path + "pause.png");
+                 if ($(vars.play_button).attr('src')) $(vars.play_button).attr("src", baseurl + vars.image_path + "pause.png");
                 if (api.options.progress_bar && !vars.is_paused) theme.progressBar();
              }else if (state == 'pause'){
                  // If image, swap to play
-                 if ($(vars.play_button).attr('src')) $(vars.play_button).attr("src", vars.image_path + "play.png");
+                if ($(vars.play_button).attr('src')) $(vars.play_button).attr("src", baseurl + vars.image_path + "play.png");
                 if (api.options.progress_bar && vars.is_paused)$(vars.progress_bar).stop().animate({left : -$(window).width()}, 0 );
              }
              
@@ -280,7 +282,8 @@
              if (api.options.progress_bar && !vars.is_paused) theme.progressBar();    //  Start progress bar
              
              if(api.options.slides.length == vars.current_slide + 1){//check if this is the last animation to fire another ajax request
-                window.location.href='/site/index/?toptag=' + encodeURIComponent($('#tagName').val()); 
+                var baseurl = jQuery.trim($('.baseUrl').html());
+                window.location.href = baseurl + '/site/index/?toptag=' + encodeURIComponent($('#tagName').val()); 
              }
          },
          

@@ -94,7 +94,7 @@
               </div>
         </div>
 	<div class="site_info">
-         Built and coded by: <a href="http://jcapillo.me" target="_blank">Joel Capillo</a><br/>
+         Built and coded by: <a href="http://www.linkedin.com/pub/joel-capillo/26/8b4/ba3" target="_blank">Joel Capillo</a><br/>
         Powered by: <a href="http://Instagram.com" target="_blank">Instagram API</a>
        </div>
         <div style="clear:both"></div>

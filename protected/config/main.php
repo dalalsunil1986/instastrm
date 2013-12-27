@@ -20,14 +20,13 @@ return array(
 	),
 
 	'modules'=>array(
-		// uncomment the following to enable the Gii tool
-		
-		'gii'=>array(
+		// uncomment the following to enable the Gii tool		
+		/*'gii'=>array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'password',
 		 	// If removed, Gii defaults to localhost only. Edit carefully to taste.
 			//'ipFilters'=>array('127.0.0.1','::1'),
-		),
+		),*/
 		
 	),
 
@@ -55,23 +54,15 @@ return array(
 		
                 // uncomment the following to use a MySQL database
 		
-		/*'db'=>array(
+		'db'=>array(
 			'connectionString' => 'mysql:host=localhost;dbname=tagstreamer',
 			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => '',
-			'charset' => 'utf8',
-		),*/
-                
-                  'db'=>array(
-			'connectionString' => 'mysql:host=capillo3774.db.9700569.hostedresource.com;dbname=capillo3774',
-			'emulatePrepare' => true,
-			'username' => 'capillo3774',
-			'password' => 'JoelFlores123',
+			'username' => 'username',
+			'password' => 'password',
 			'charset' => 'utf8',
 		),
-		
-		
+                
+               
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
             'errorAction'=>'site/error',
@@ -99,6 +90,7 @@ return array(
 		// this is used in contact page
 		'adminEmail'=>'webmaster@example.com',
                 'siteUrl'=>'http://instastrm.com',
-                'viaName'=>'instastrm'
+                'viaName'=>'instastrm',
+                'instagramToken'=>'your_instagram_token'
 	),
 );

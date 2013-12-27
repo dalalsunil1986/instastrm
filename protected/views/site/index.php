@@ -2,7 +2,7 @@
 $this->pageTitle = 'Real-time streaming of Instagram photos by photo tags.';
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/jquery.blockUI.js');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/scroll-startstop.events.jquery.js?y=5');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/script.js?y=5');
+Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/script.js?y=6');
 ?>
 
 <div class="hero-unit">
@@ -14,7 +14,7 @@ foreach(Yii::app()->user->getFlashes() as $key => $message) {
   
   Yii::app()->clientScript->registerScript('exitscript',"
        if(isThereAnotherOpenBrowser('instastrmr')){
-         window.location.href = '/site/OverLimit'; 
+         window.location.href = '/stream/site/OverLimit'; 
        }
        $(window).on('beforeunload', function(){}).unload(function(){ deleteCookie('instastrmr'); });
      "
@@ -33,7 +33,7 @@ foreach(Yii::app()->user->getFlashes() as $key => $message) {
   <?php if(strlen(trim($str)) > 5): ?>
     <div class="controller_holder"><a href="#" class="btn btn-danger" id="streamController">Pause</a><div id="loader"></div><div style="clear:both"></div></div>
   <?php endif; ?>
-	<div class="title_holder"><b>Popular Tags</b></div><div class="curvedarrow"></div><br />
+	<div class="title_holder"><b>Select Popular Tags</b></div><div class="curvedarrow"></div><br />
 	<?php echo $this->topTenTags(); ?>
 </div>
  <hr>

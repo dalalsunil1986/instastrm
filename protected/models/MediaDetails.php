@@ -187,25 +187,25 @@ class MediaDetails extends CActiveRecord
 	
     public function displayByMediaId($tag_id,$media_id,$max_age = null){
 	   
-	   $details = array();
-	   
-	   if(!isset($tag_id))
-	     return $details;
-	
-       $sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' ORDER BY date_created DESC LIMIT 3';
-	   if(isset($max_age)){
-	      $sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' AND date_created > '.$max_age.' ORDER BY date_created DESC LIMIT 1';
-	   }
-	   
-       $result = Yii::app()->db->createCommand($sql)->queryAll();
-	   if($result != 0){
-		foreach($result as $row){
-		  $details[]=$row;	
+		$details = array();
+		
+		if(!isset($tag_id))
+		   return $details;
+		
+		$sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' ORDER BY date_created DESC LIMIT 3';
+		if(isset($max_age)){
+		 $sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' AND date_created > '.$max_age.' ORDER BY date_created DESC LIMIT 1';
 		}
-	   }
-	   
-       return $details;
-	}
+		
+		$result = Yii::app()->db->createCommand($sql)->queryAll();
+		if($result != 0){
+		   foreach($result as $row){
+		     $details[]=$row;	
+		   }
+		}
+		
+		return $details;
+    }
     
      public function displaySlideShow($tag_id,$media_id,$max_age){
        

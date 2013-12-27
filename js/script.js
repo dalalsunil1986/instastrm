@@ -1,3 +1,10 @@
+/**
+ * Main javascript file
+ * 
+ * @author Joel Capillo <hunyoboy@gmail.com>
+ * 
+ */
+
 $(function() {
    var startIntervalId = 0;
    var stopIntervalId = 0;
@@ -54,7 +61,7 @@ $(function() {
      }
      
     $('#fullSize').bind('click', function() {//bind a click function to append the latest feed age(unix time) for full size view
-       var url = '/site/SuperSize/?tag=' + $('#tagName').val().replace(/[^a-zA-Z ]/g, "") + '&id=' + latestFeedDate();//strip the tagname for special chars
+       var url = '/stream/site/SuperSize/?tag=' + $('#tagName').val().replace(/[^a-zA-Z ]/g, "") + '&id=' + latestFeedDate();//strip the tagname for special chars
        window.location.href=url;
     });
 

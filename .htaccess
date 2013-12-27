@@ -2,7 +2,7 @@ Options +FollowSymLinks
 IndexIgnore */*
 RewriteEngine on
 # for GoDaddy
-Rewritebase /
+#Rewritebase /
 
 # if a directory or a file exists, use it directly
 RewriteCond %{REQUEST_FILENAME} !-f

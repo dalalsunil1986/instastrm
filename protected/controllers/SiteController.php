@@ -80,7 +80,7 @@ class SiteController extends Controller
 			
 			$str = SocialMedia::instagramFeed($tag_id);
 		}
-        
+       
 		$this->tag = $tag;
 		$this->str = $str;
 		
@@ -180,7 +180,7 @@ class SiteController extends Controller
 	      echo 'none';
 	  }  
 	   
-        }
+    }
        
 	//action that renders the supersize version of the images
 	public function actionSuperSize(){

@@ -11,7 +11,7 @@
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
         <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery.easing.min.js"></script>
         <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/supersized.3.2.7.min.js"></script>
-        <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/supersize.js?y=10"></script>
+        <script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/supersize.js?y=11"></script>
     </head>
     
     <body>
