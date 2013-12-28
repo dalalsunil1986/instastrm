@@ -7,6 +7,9 @@
  * @property string $id
  * @property string $name
  * @property string $unix_time
+ *
+ * @author Joel Capillo <hunyoboy@gmail.com>
+ * 
  */
 class Tags extends CActiveRecord
 {
@@ -90,6 +93,13 @@ class Tags extends CActiveRecord
 		));
 	}
 	
+	/**
+	 * Checks if a given tag exist on the database
+	 *
+	 * @param string $tag the tag to check
+	 *
+	 * @return boolean
+	 */
 	public function isExist($tag){
 	  $sql = 'SELECT id FROM tags WHERE name ="'.$tag.'" LIMIT 1';
           $tag_id = Yii::app()->db->createCommand($sql)->queryScalar();
@@ -100,15 +110,22 @@ class Tags extends CActiveRecord
 	   return false;
 	}
 	
-	
+	/**
+	 * Saves a tag
+	 *
+	 * @param string the tag to save
+	 */
 	public function saveTag($tag){
 	 $unix_current_time = strtotime(date("Y-m-d H:i:s"));//grab the current time in unix format
 	 $command = 'INSERT INTO tags VALUES(null,"'.$tag.'",'.$unix_current_time.')';
 	 return Yii::app()->db->createCommand($command)->execute();
 	}
 	
-	//cron job function deleting unused tags and its respective media_details
-	//runs every minute
+	
+	/**
+	 * To be called by a cronjob deleting unused tags and its respective media_details every minute
+	 *
+	 */
 	public function deleteUnusedTags(){
            $unix_current_time = strtotime(date("Y-m-d H:i:s"));
 	   foreach(self::model()->findAll() as $tag){
@@ -123,7 +140,12 @@ class Tags extends CActiveRecord
 	   }
 	}
 	
-	//called through ajax every second to signify that this tag is being used
+	
+	/**
+	 * Called through ajax every second to signify that this tag is being used and shouldn't be deleted
+	 *
+	 * @param integer $tag_id the id of the tag to update
+	 */
 	public function updateTagTime($tag_id){
 	  $command = 'UPDATE tags SET unix_time = '.strtotime(date("Y-m-d H:i:s")).' WHERE id ='.$tag_id;
 	  $result = Yii::app()->db->createCommand($command)->execute();
@@ -134,7 +156,11 @@ class Tags extends CActiveRecord
 	   return false;
 	}
 	
-	//return all active tags
+	
+	/**
+	 * Returns all active tags
+	 *
+	 */
 	public function allTags(){
 	   $tags=array();
 	   $sql = 'SELECT name FROM tags';

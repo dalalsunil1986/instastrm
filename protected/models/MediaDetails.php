@@ -14,6 +14,9 @@
  * @property integer $media_id
  * @property integer $media_type_id
  * @property string $unique_identifier
+ *
+ * @author Joel Capillo <hunyoboy@gmail.com>
+ * 
  */
 class MediaDetails extends CActiveRecord
 {
@@ -116,7 +119,13 @@ class MediaDetails extends CActiveRecord
 		));
 	}
 	
-	//check if a media_detail is already on the database
+	/**
+	 * Check if a media_detail object is already on the database
+	 *
+	 * @param integer $tag_id the tag id
+	 * @param string $unique_identifier the unique identifier for each feed from Instagram
+	 * @return boolean
+	 */
 	public function isExist($tag_id,$unique_identifier){
 	  if(!isset($tag_id) || strlen((string)$tag_id) == 0){
 	     return false;
@@ -132,7 +141,13 @@ class MediaDetails extends CActiveRecord
 	  }
 	}
 	
-	//delete all media details older than # minutes
+	
+	/**
+	 * Delete Instagram feed older than the given minutes
+	 *
+	 * @param integer $minutes_old the time in minutes
+	 *
+	 */
 	public function cleanUp($minutes_old){
 	  $unix_current_time = strtotime(date("Y-m-d H:i:s"));
 	  $time_back = $unix_current_time - ($minutes_old*60);//older than # minutes
@@ -141,7 +156,13 @@ class MediaDetails extends CActiveRecord
 	  return $result;
 	}
 	
-	//@param api_result -> result array from API query 
+	
+	/**
+	 * Save a media detail feed specifically Instagram feed on the database
+	 *
+	 * @param array $api_result result array from Instagram/Twiter API query
+	 * 
+	 */
 	public function saveMediaDetails($api_result){
 	   
 	   $count = count($api_result['media_id'])-1;
@@ -184,64 +205,92 @@ class MediaDetails extends CActiveRecord
 	   
 	}
 	
+	/**
+	 * Return a media feed(Instagram feed) by tag_id and media_id
+	 *
+	 * @param integer $tag_id the tag id
+	 * @param integer $media_id the media id
+	 * @param integer $max_age the age limit requirement for a feed to be included to the query result
+	 *
+	 * @return array $details
+	 */
+	public function displayByMediaId($tag_id,$media_id,$max_age = null){
+	       
+		    $details = array();
+		    
+		    if(!isset($tag_id))
+		       return $details;
+		    
+		    $sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' ORDER BY date_created DESC LIMIT 3';
+		    if(isset($max_age)){
+		     $sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' AND date_created > '.$max_age.' ORDER BY date_created DESC LIMIT 1';
+		    }
+		    
+		    $result = Yii::app()->db->createCommand($sql)->queryAll();
+		    if($result != 0){
+		       foreach($result as $row){
+			 $details[]=$row;	
+		       }
+		    }
+		    
+		    return $details;
+	}
+        
+	/**
+	 * Queries an Instagram feed for the slideshow display
+	 *
+	 * @param integer $tag_id the tag id
+	 * @param integer $media_id the media id
+	 * @param integer $max_age the age limit requirement for a feed to be included to the query result
+	 *
+	 * @return array
+	 *
+	 **/
+	public function displaySlideShow($tag_id,$media_id,$max_age){
+	  
+	  $details = array();
+	  
+	  if(!isset($tag_id))
+	    return $details;
+       
+	  $sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' AND date_created <= '.$max_age.' ORDER BY date_created DESC LIMIT 30';
+       
+	  $result = Yii::app()->db->createCommand($sql)->queryAll();
+	  if($result != 0){
+	   foreach($result as $row){
+	     $details[]=$row;    
+	   }
+	  }
+	  
+	  return $details;
+        }
+    
 	
-    public function displayByMediaId($tag_id,$media_id,$max_age = null){
+	/**
+	 * Returns a single Instagram feed that is older than the min_age
+	 *
+	 * @param integer $tag_id the tag id
+	 * @param integer $media_id the media id
+	 * @param integer $min_age the minimum age limit requirement for a feed to be included to the query result
+	 *
+	 * @return array
+	 *
+	 */
+	public function displayByMediaIdOld($tag_id,$media_id,$min_age){
 	   
-		$details = array();
-		
-		if(!isset($tag_id))
-		   return $details;
-		
-		$sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' ORDER BY date_created DESC LIMIT 3';
-		if(isset($max_age)){
-		 $sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' AND date_created > '.$max_age.' ORDER BY date_created DESC LIMIT 1';
-		}
-		
-		$result = Yii::app()->db->createCommand($sql)->queryAll();
-		if($result != 0){
-		   foreach($result as $row){
-		     $details[]=$row;	
-		   }
-		}
-		
-		return $details;
-    }
-    
-     public function displaySlideShow($tag_id,$media_id,$max_age){
-       
-       $details = array();
-       
-       if(!isset($tag_id))
-         return $details;
-    
-       $sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' AND date_created <= '.$max_age.' ORDER BY date_created DESC LIMIT 30';
-    
-       $result = Yii::app()->db->createCommand($sql)->queryAll();
-       if($result != 0){
-        foreach($result as $row){
-          $details[]=$row;    
-        }
-       }
-       
-       return $details;
-    }
-    
-    //returns a single Instagram feed that is older than the min_age
-    public function displayByMediaIdOld($tag_id,$media_id,$min_age){
-       
-       $details = array();
-       if(!isset($tag_id))
-         return $details;
-    
-       $sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' AND date_created < '.$min_age.' ORDER BY date_created DESC LIMIT 1';
-       $result = Yii::app()->db->createCommand($sql)->queryAll();
-       if($result != 0){
-        foreach($result as $row){
-          $details[]=$row;    
-        }
-       }
-       return $details;
-    }
+	   $details = array();
+	   if(!isset($tag_id))
+	     return $details;
+	
+	   $sql = 'SELECT * FROM media_details WHERE tag_id = '.$tag_id.' AND media_id='.$media_id.' AND date_created < '.$min_age.' ORDER BY date_created DESC LIMIT 1';
+	   $result = Yii::app()->db->createCommand($sql)->queryAll();
+	   if($result != 0){
+	    foreach($result as $row){
+	      $details[]=$row;    
+	    }
+	   }
+	   return $details;
+	}
 	
 	
 	

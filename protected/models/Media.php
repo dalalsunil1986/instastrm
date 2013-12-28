@@ -6,6 +6,9 @@
  * The followings are the available columns in table 'media':
  * @property string $id
  * @property string $name
+ *
+ * @author Joel Capillo <hunyoboy@gmail.com>
+ * 
  */
 class Media extends CActiveRecord
 {
