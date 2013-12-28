@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * This is the application's main controller.
+ * 
+ * @author Joel Capillo <hunyoboy@gmail.com>
+ * 
+ */
 class SiteController extends Controller
 {
 	/**
@@ -21,12 +26,20 @@ class SiteController extends Controller
 		);
 	}
 	
-	//action where users got redirected if they opened another browser
+	
+	/**
+	 * Action where users got redirected if they opened another browser
+	 * 
+	 */
 	public function actionOverLimit(){
 	   $this->render('limit');
 	}
     
-        //load the main page
+        
+	/**
+	 * Loads the main page through GET/POST request
+	 *
+	 */
 	public function actionIndex()
 	{
 		$str = '';
@@ -87,7 +100,9 @@ class SiteController extends Controller
 		$this->render('index',array('str'=>$str,'tag'=>$tag,'tag_id'=>$tag_id));
 	}
 	
-	
+	/**
+	 * Returns a random tag
+	 */
 	private function array_random($arr, $num = 1) {
 		shuffle($arr);
 		$r = array();
@@ -96,7 +111,11 @@ class SiteController extends Controller
 		}
 		return $num == 1 ? $r[0] : $r;
 	}
-
+	
+	/**
+	 * Returns 10 of the most popular tags in random fashion/pattern.
+	 *
+	 */
 	public function topTenTags(){
 	    
 	    $temp_arr = array();
@@ -122,7 +141,10 @@ class SiteController extends Controller
 	}
 	
 	
-	
+	/**
+	 * Main action for our ajax query for the latest feed from Instagram
+	 *
+	 */
 	public function actionInstagramRefresh(){
 		
 		if(!Yii::app()->request->isAjaxRequest){ //only allow ajax request
@@ -164,7 +186,9 @@ class SiteController extends Controller
 	      
 	}
     
-    
+        /**
+	 * Loads the oldest Instagram feed that exist on the database
+	 */
 	public function actionOldInstagram(){
 	  
 	   if(!Yii::app()->request->isAjaxRequest){ //only allow ajax request
@@ -180,9 +204,13 @@ class SiteController extends Controller
 	      echo 'none';
 	  }  
 	   
-    }
+        }
        
-	//action that renders the supersize version of the images
+	
+	/**
+	 * Action that renders the supersize version of the images
+	 *
+	 */
 	public function actionSuperSize(){
 		$age = '';
 		if(isset($_GET['id']))
@@ -215,7 +243,10 @@ class SiteController extends Controller
 	}
 	
     
-	//ajax action that retrieves the data for the slideshow
+	
+	/**
+	 * Ajax action that retrieves the data for the slideshow
+	 */
 	public function actionSlideInstagram(){
 	   
 	    if(!Yii::app()->request->isAjaxRequest){ //only allow ajax request
@@ -253,7 +284,10 @@ class SiteController extends Controller
 	
 ////////////////////////////////////actions called by cronjobs///////////////////////////////////////////////////
 	
-	//queried every minute by cronjob
+	
+	/**
+	 * Queried every minute by cronjob
+	 */
 	public function actionApi(){
 		set_time_limit(0);
 		for($i=1;$i<=3;$i++){
@@ -271,7 +305,10 @@ class SiteController extends Controller
 		}
 	}
 	
-	//queried every minute by cronjob
+
+	/**
+	 * Queried every minute by cronjob
+	 */
 	public function actionTags(){
 	   set_time_limit(0);
 	   for($i=1;$i<=2;$i++){
@@ -287,13 +324,17 @@ class SiteController extends Controller
 	    }	
 	}
 	
-	//queried every 3 minutes by cron to clean up database for media details older than the specified time
+	
+	/**
+	 * Queried every 3 minutes by cron to clean up database for media details older than the specified time
+	 */
 	public function actionClean(){
 	  set_time_limit(0);
           $minutes = 60*5; //delete all media details older than 5 minutes
 	  MediaDetails::model()->cleanUp($minutes);
 	  $this->cleanMemory();
 	}
+	
 	
 	public function cleanMemory(){
 		gc_enable(); // Enable Garbage Collector
