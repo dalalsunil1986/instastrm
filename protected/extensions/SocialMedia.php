@@ -462,12 +462,15 @@ class SocialMedia{
                     $str .= '<div class="twitter_plugin_holder" id="twitter_plugin_holder_'.$unique_identifier.'">
                              <a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$url.'" data-via="'.Yii::app()->params['viaName'].'">Tweet</a>
                              </div>';
+                     
+                     //This is commented since Pinterest button is not supported        
                     /*$str .=  '<div class="pinterest_plugin_holder" id="pinterest_plugin_holder_'.$unique_identifier.'">
                                   <iframe class="pin-it-button" scrolling="no" frameborder="0" style="border:none;width:90px;height:20px;" 
                                   src="http://pinit-cdn.pinterest.com/pinit.html?url='.urlencode($url).'&media='.urlencode($media_url).
                                   '&count-layout=horizontal'.$description.'&ref='.urlencode(self::createDocumentUri()).'" >
                                   </iframe>
                               </div>';*/
+                    
                     $str .= '<div style="clear:both"></div></div><div class="bigImageHolder"><img id="bigImage_'.$unique_identifier.'" src=""/></div></div>';//closing div tag
           $closeStartDiv = '</div>';
       
