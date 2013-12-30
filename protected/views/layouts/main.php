@@ -46,7 +46,11 @@
 
 <body>
    
-  
+  <div class="github-fork-ribbon-wrapper right">
+      <div class="github-fork-ribbon">
+	  <a href="https://github.com/hunyoboy/instastrm">Fork me on GitHub</a>
+      </div>
+  </div>
    
    <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
