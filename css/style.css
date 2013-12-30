@@ -413,6 +413,7 @@ footer{
 
 .github-fork-ribbon-wrapper.right {
   right: 0;
+  position:fixed;
 }
 
 .github-fork-ribbon-wrapper.left-bottom {
