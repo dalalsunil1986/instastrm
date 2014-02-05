@@ -1,10 +1,3 @@
-/**
- * Main javascript file
- * 
- * @author Joel Capillo <hunyoboy@gmail.com>
- * 
- */
-
 $(function() {
    var startIntervalId = 0;
    var stopIntervalId = 0;
